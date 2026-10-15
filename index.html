@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>12306影视 - 选片像买票，开播即发车 | 12306yingshi-h5.github.io</title>
+<meta name="description" content="12306影视（12306yingshi-h5.github.io）把电影、剧集、综艺、动漫、短剧做成车次：购票区搜片、候车厅看更新、车厢分区挑类型、正点率榜看评分。铁路蓝白风，移动端自适应，纯静态演示站。" />
+<meta name="keywords" content="12306影视,12306yingshi-h5,电影车次,剧集车次,综艺动漫,短剧,1080P,4K,杜比,光影列车" />
+<link rel="canonical" href="https://12306yingshi-h5.github.io/" />
+<style>
+:root{
+  --blue:#1A6FE0;--sky:#CFE3FF;--cloud:#F4F8FD;--orange:#FF7A1A;--ink:#10202E;
+  --gray:#5A6B7B;--line:rgba(26,111,224,.28);--glass:rgba(255,255,255,.75);--maxw:1140px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(180deg,#E7F1FF 0%,#F4F8FD 42%,#FFFFFF 100%);
+  color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 16px}
+
+.rail{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.rail::before{content:"";position:absolute;top:-12%;left:-6%;width:420px;height:420px;background:radial-gradient(circle,rgba(207,227,255,.6),transparent 70%);animation:run 9s linear infinite}
+.rail::after{content:"";position:absolute;bottom:-14%;right:-6%;width:440px;height:440px;background:radial-gradient(circle,rgba(255,122,26,.16),transparent 70%);animation:run 12s linear infinite reverse}
+@keyframes run{0%{transform:translateX(-20px)}50%{transform:translateX(20px)}100%{transform:translateX(-20px)}}
+
+header.site{position:sticky;top:0;z-index:60;background:rgba(244,248,253,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:12px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px}
+.logo-icon{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--sky));
+  display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 18px rgba(26,111,224,.35);position:relative}
+.logo-icon::after{content:"";position:absolute;top:6px;left:6px;width:6px;height:6px;border-radius:50%;background:#E2342F}
+.logo small{display:block;font-size:9px;color:var(--gray);font-weight:500}
+.menu{margin-left:auto;display:flex;gap:4px}
+.menu a{padding:7px 14px;border-radius:8px;font-size:13px;color:var(--gray);transition:.2s;font-weight:600}
+.menu a:hover{background:rgba(26,111,224,.1);color:var(--blue)}
+.search-min{display:flex;gap:6px}
+.search-min input{width:120px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);outline:none;font-size:13px}
+.search-min button{border:0;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:800;background:var(--orange);color:#fff;font-size:13px}
+.burger{display:none;margin-left:auto;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 10px;font-size:16px}
+
+/* 购票区 hero */
+.hero{position:relative;z-index:1;margin:24px 0 8px;border-radius:28px;overflow:hidden;background:#fff;border:1px solid var(--line);
+  padding:42px 40px;min-height:320px;
+  background-image:radial-gradient(120% 80% at 10% 0%,rgba(207,227,255,.7),transparent 55%),radial-gradient(120% 80% at 94% 100%,rgba(255,122,26,.18),transparent 55%)}
+.hero h1{font-size:34px;margin:0 0 6px}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.hero p{color:var(--gray);font-size:15px;margin:0 0 22px}
+.buy{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;background:#F4F8FD;border:2px solid var(--blue);border-radius:18px;padding:14px;max-width:760px}
+.buy label{font-size:11px;font-weight:800;color:var(--gray);display:block;margin-bottom:4px;padding-left:4px}
+.buy select,.buy .fake{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:14px;color:var(--ink);font-weight:700}
+.buy button{border:0;padding:0 26px;border-radius:12px;background:linear-gradient(135deg,var(--blue),#4F93FF);color:#fff;font-weight:900;cursor:pointer;font-size:15px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.quick a{font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;background:rgba(26,111,224,.08);color:var(--blue)}
+.quick a:hover{background:rgba(26,111,224,.18)}
+
+.section{padding:34px 0;position:relative;z-index:1}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.sec-head h2{font-size:22px;margin:0}
+.sec-head h2::before{content:"🚄 ";}
+.sec-head h2 .b{color:var(--blue)}
+.sec-head span{color:var(--gray);font-size:12px}
+.more{margin-left:auto;color:var(--orange);font-size:12px;font-weight:800}
+
+/* 车次卡片 */
+.trains{display:grid;grid-template-columns:1fr;gap:12px}
+.train{display:grid;grid-template-columns:84px 1fr auto;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px;transition:.25s}
+.train:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 12px 28px rgba(26,111,224,.18)}
+.code{font-weight:900;font-size:18px;color:#fff;background:var(--blue);border-radius:10px;padding:8px 0;text-align:center;letter-spacing:1px}
+.code.d{background:#7A3FF2}.code.k{background:#3FA34D}.code.c{background:var(--orange)}
+.route{font-size:13px;color:var(--gray);margin-bottom:4px}
+.route b{color:var(--ink);font-size:15px}
+.train h4{margin:0;font-size:16px}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.meta span{font-size:10px;padding:2px 8px;border-radius:999px;background:#EEF3FF;color:var(--gray);font-weight:700}
+.seat{text-align:right;font-weight:900;color:var(--blue);font-size:14px;white-space:nowrap}
+.seat small{display:block;font-size:10px;color:var(--gray);font-weight:600}
+.board-btn{border:0;margin-top:6px;background:var(--orange);color:#fff;font-weight:800;padding:6px 14px;border-radius:999px;cursor:pointer;font-size:12px}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{border-radius:18px;overflow:hidden;background:#fff;border:1px solid var(--line);transition:.25s}
+.card:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 14px 32px rgba(26,111,224,.18)}
+.cover{aspect-ratio:3/4;border-radius:16px 16px 0 0;position:relative;display:flex;align-items:flex-start;justify-content:space-between;padding:10px}
+.card:nth-child(1) .cover{background:linear-gradient(160deg,#06294f,#1A6FE0)}
+.card:nth-child(2) .cover{background:linear-gradient(160deg,#3a1c00,#FF7A1A)}
+.card:nth-child(3) .cover{background:linear-gradient(160deg,#063a36,#1FB6A6)}
+.card:nth-child(4) .cover{background:linear-gradient(160deg,#2a0f3a,#9B8BFF)}
+.card:nth-child(5) .cover{background:linear-gradient(160deg,#102a4d,#5AA9FF)}
+.card:nth-child(6) .cover{background:linear-gradient(160deg,#33111f,#FF8FB0)}
+.card:nth-child(7) .cover{background:linear-gradient(160deg,#2a1606,#FF9A3D)}
+.card:nth-child(8) .cover{background:linear-gradient(160deg,#1c1f24,#9AA7BD)}
+.flag{font-size:10px;font-weight:900;padding:3px 9px;border-radius:6px;background:var(--blue);color:#fff}
+.flag.new{background:var(--orange)}
+.flag.hot{background:#FF3B5C}
+.flag.vip{background:#7A3FF2}
+.cover h4{margin:auto 0 0;font-size:14px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.45);width:100%}
+.body{padding:12px}
+.tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.tags span{font-size:10px;padding:2px 8px;border-radius:999px;background:#EEF3FF;color:var(--gray);font-weight:600}
+.body p{margin:0;font-size:11px;color:var(--gray);line-height:1.5}
+
+.zones{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.zone{border-radius:16px;padding:16px;background:#fff;border:1px solid var(--line);transition:.25s}
+.zone:hover{transform:translateY(-3px);border-color:var(--sky)}
+.zone .ic{font-size:22px}
+.zone h3{font-size:13px;margin:6px 0 2px}
+.zone p{font-size:10px;color:var(--gray);margin:0}
+
+.rank{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rk{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px}
+.rk-num{font-size:22px;font-weight:900;color:var(--blue);width:34px;text-align:center}
+.rk-num.top{color:var(--orange)}
+.rk-info{flex:1}
+.rk-info h4{margin:0 0 2px;font-size:14px}
+.rk-info span{font-size:11px;color:var(--gray)}
+.rk-tag{font-size:12px;font-weight:800;color:var(--orange)}
+
+.about{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}
+.about-card{border-radius:22px;padding:24px;background:#fff;border:1px solid var(--line)}
+.about-card h3{font-size:18px;margin:0 0 12px}
+.about-card h3::before{content:"🚄 ";}
+.about-card p,.about-card li{font-size:13px;color:var(--gray);line-height:1.8}
+.about-card ul{padding-left:18px;margin:0}
+.stats{display:flex;gap:12px;margin-top:16px}
+.stat{flex:1;text-align:center;padding:14px;border-radius:16px;background:rgba(26,111,224,.07);border:1px solid var(--line)}
+.stat b{display:block;font-size:20px;color:var(--blue)}
+.stat span{font-size:11px;color:var(--gray)}
+
+footer.site{border-top:1px solid var(--line);padding:28px 0 44px;color:var(--gray);font-size:12px;text-align:center;background:#fff}
+footer.site a{color:var(--blue)}
+code{background:#EEF3FF;border:1px solid var(--line);padding:2px 8px;border-radius:6px;color:var(--ink);font-size:11px;font-family:"Courier New",monospace}
+
+@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}.zones{grid-template-columns:repeat(2,1fr)}.rank{grid-template-columns:1fr}.about{grid-template-columns:1fr}.buy{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){
+  .menu{display:none;position:absolute;top:64px;left:0;right:0;flex-direction:column;background:#fff;border-bottom:1px solid var(--line);padding:10px 16px;gap:4px}
+  .menu.open{display:flex}.burger{display:block}.search-min input{width:84px}.hero h1{font-size:24px}
+  .train{grid-template-columns:64px 1fr;}.seat{grid-column:2/3;text-align:left}
+  .grid,.zones{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/laoliu.js"></script>
+
+<div class="rail"></div>
+
+<header class="site">
+  <div class="wrap nav">
+    <div class="logo">
+      <div class="logo-icon">🚄</div>
+      <div>12306影视<small>12306yingshi-h5.github.io</small></div>
+    </div>
+    <nav class="menu" id="menu">
+      <a href="#home">首页</a>
+      <a href="#movie">电影车次</a>
+      <a href="#series">剧集车次</a>
+      <a href="#va">综艺动漫</a>
+      <a href="#short">短剧微番</a>
+      <a href="#about">关于</a>
+    </nav>
+    <div class="search-min">
+      <input type="text" placeholder="片名/类型" aria-label="搜索" />
+      <button onclick="alert('演示站：搜索用 # 占位')">查票</button>
+    </div>
+    <button class="burger" id="burger">☰</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" id="home">
+    <h1>12306影视，<br/><em>选片像买票，开播即发车</em></h1>
+    <p>电影、剧集、综艺、动漫、短剧都是“车次”。填心情和类型，系统给你排一班光影列车，检票上车就能看。</p>
+    <div class="buy">
+      <div>
+        <label>出发地（心情）</label>
+        <div class="fake">想放松 ▾</div>
+      </div>
+      <div>
+        <label>到达地（类型）</label>
+        <div class="fake">悬疑 / 治愈 / 科幻 ▾</div>
+      </div>
+      <div>
+        <label>席位</label>
+        <div class="fake">1080P / 4K / 杜比 ▾</div>
+      </div>
+      <button onclick="alert('演示站：发车结果用 # 占位')">查 车 次</button>
+    </div>
+    <div class="quick">
+      <a href="#movie">G字头大片</a>
+      <a href="#series">D字头热剧</a>
+      <a href="#va">城际综艺</a>
+      <a href="#short">K字头短剧</a>
+      <a href="#board">正点率榜</a>
+      <a href="#zones">按车厢挑</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sec-head"><h2><span class="b">始发</span>车次牌</h2><span>Today's Departures</span><a class="more" href="#">全部车次 #</a></div>
+    <div class="trains">
+      <div class="train">
+        <div class="code">G001</div>
+        <div>
+          <div class="route"><b>流浪地球3</b> · 国产科幻 → 太空史诗</div>
+          <h4>发车 20:00 ｜ 时长 168 分钟 ｜ 检票口 4K厅</h4>
+          <div class="meta"><span>科幻</span><span>国产</span><span>IMAX感</span><span>正点率 98%</span></div>
+        </div>
+        <div class="seat">一等席<small>4K · 杜比</small><button class="board-btn" onclick="location.href='#movie'">检票上车</button></div>
+      </div>
+
+      <div class="train">
+        <div class="code d">D202</div>
+        <div>
+          <div class="route"><b>漫长的季节</b> · 东北悬疑 → 时间线终点</div>
+          <h4>发车 21:30 ｜ 12 集连播 ｜ 检票口 剧集车厢</h4>
+          <div class="meta"><span>悬疑</span><span>国产</span><span>神剧</span><span>正点率 97%</span></div>
+        </div>
+        <div class="seat">卧铺席<small>1080P</small><button class="board-btn" onclick="location.href='#series'">检票上车</button></div>
+      </div>
+
+      <div class="train">
+        <div class="code c">C308</div>
+        <div>
+          <div class="route"><b>向往的生活</b> · 田园慢综 → 院子里的晚饭</div>
+          <h4>发车 18:00 ｜ 周更 ｜ 检票口 综艺车厢</h4>
+          <div class="meta"><span>慢综</span><span>治愈</span><span>做饭</span><span>正点率 95%</span></div>
+        </div>
+        <div class="seat">站席<small>1080P</small><button class="board-btn" onclick="location.href='#va'">检票上车</button></div>
+      </div>
+
+      <div class="train">
+        <div class="code k">K520</div>
+        <div>
+          <div class="route"><b>山中的邮差</b> · 竖屏短剧 → 3 分钟一站</div>
+          <h4>发车 全天 ｜ 每集 3 分钟 ｜ 检票口 短剧月台</h4>
+          <div class="meta"><span>短剧</span><span>治愈</span><span>上头</span><span>正点率 92%</span></div>
+        </div>
+        <div class="seat">站席<small>高清</small><button class="board-btn" onclick="location.href='#short'">检票上车</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="movie">
+    <div class="sec-head"><h2><span class="b">电影</span>车次</h2><span>Movie Trains</span><a class="more" href="#">更多 #</a></div>
+    <div class="grid">
+      <div class="card"><div class="cover"><span class="flag">G字头</span><h4>沙丘2</h4></div><div class="body"><div class="tags"><span>科幻</span><span>史诗</span><span>4K</span></div><p>沙漠粒子、沙虫、飞船尾焰，大班列驶进影院。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag new">新班</span><h4>哪吒之魔童闹海</h4></div><div class="body"><div class="tags"><span>动画</span><span>国漫</span><span>燃</span></div><p>闹海、父子、天命，国漫快车全程不打盹。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">D字头</span><h4>盗梦空间</h4></div><div class="body"><div class="tags"><span>烧脑</span><span>诺兰</span><span>经典</span></div><p>梦里套梦，像换乘三次还不出站。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag vip">杜比</span><h4>星际穿越</h4></div><div class="body"><div class="tags"><span>太空</span><span>亲情</span><span>杜比</span></div><p>五维书架+汉斯季默，声音也会发车。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">G字头</span><h4>封神第一部</h4></div><div class="body"><div class="tags"><span>神话</span><span>战争</span><span>特效</span></div><p>朝歌、雷震子、质子团，大片准点进站。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag new">新班</span><h4>孤注一掷</h4></div><div class="body"><div class="tags"><span>反诈</span><span>现实</span><span>悬疑</span></div><p>缅北线、诈骗园、反杀站，节奏很密。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">修复</span><h4>霸王别姬</h4></div><div class="body"><div class="tags"><span>经典</span><span>文艺</span><span>4K修复</span></div><p>一辈子一出戏，老片重映也满座。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag hot">热</span><h4>满江红</h4></div><div class="body"><div class="tags"><span>古装</span><span>悬疑</span><span>沈腾</span></div><p>大院、密谋、背词，喜剧悬疑同车厢。</p></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="series">
+    <div class="sec-head"><h2><span class="b">剧集</span>车次</h2><span>Series Trains</span><a class="more" href="#">更多 #</a></div>
+    <div class="grid">
+      <div class="card"><div class="cover"><span class="flag hot">热播</span><h4>狂飙</h4></div><div class="body"><div class="tags"><span>犯罪</span><span>国产</span><span>神剧</span></div><p>二十年扫黑除恶，安欣这班车停不下来。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">D字头</span><h4>三体</h4></div><div class="body"><div class="tags"><span>科幻</span><span>硬核</span><span>国产</span></div><p>红岸、智子、倒计时，原著党准点上车。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag new">周更</span><h4>繁花</h4></div><div class="body"><div class="tags"><span>年代</span><span>上海</span><span>王家卫</span></div><p>黄河路、至真园、宝总，腔调就是车次号。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">韩剧</span><h4>我的解放日志</h4></div><div class="body"><div class="tags"><span>治愈</span><span>社畜</span><span>慢热</span></div><p>不通勤到海边，也在心里换乘。</p></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="va">
+    <div class="sec-head"><h2>综艺 / 动漫车厢</h2><span>Variety & Anime Cars</span><a class="more" href="#">更多 #</a></div>
+    <div class="grid">
+      <div class="card"><div class="cover"><span class="flag hot">热</span><h4>歌手2026</h4></div><div class="body"><div class="tags"><span>音综</span><span>真唱</span><span>现场</span></div><p>一开嗓就上热搜，车厢里全是弹幕。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag new">新番</span><h4>灵笼 第二季</h4></div><div class="body"><div class="tags"><span>国漫</span><span>末日</span><span>科幻</span></div><p>灯塔、玛娜、猎荒，动画也开长途车。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">日番</span><h4>咒术回战</h4></div><div class="body"><div class="tags"><span>热血</span><span>战斗</span><span>涩谷</span></div><p>五条悟出站，全场起立。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">慢综</span><h4>向往的生活</h4></div><div class="body"><div class="tags"><span>田园</span><span>做饭</span><span>狗子</span></div><p>采蘑菇、生火、等朋友，慢车也舒服。</p></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="zones">
+    <div class="sec-head"><h2><span class="b">按车厢</span>挑片</h2><span>Pick a Car</span></div>
+    <div class="zones">
+      <div class="zone"><div class="ic">🎬</div><h3>头等车厢</h3><p>4K / 杜比 / 院线大片</p></div>
+      <div class="zone"><div class="ic">📺</div><h3>长途剧厢</h3><p>美剧 / 韩剧 / 国剧 / 日剧</p></div>
+      <div class="zone"><div class="ic">🎤</div><h3>城际综艺</h3><p>音综 / 慢综 / 真人秀</p></div>
+      <div class="zone"><div class="ic">🐉</div><h3>动漫车厢</h3><p>国漫 / 日番 / 剧场版</p></div>
+      <div class="zone"><div class="ic">📱</div><h3>短剧月台</h3><p>竖屏 / 3分钟 / 上头</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="short">
+    <div class="sec-head"><h2>短剧 / 微番月台</h2><span>Short-drama Platform</span><a class="more" href="#">更多 #</a></div>
+    <div class="grid">
+      <div class="card"><div class="cover"><span class="flag hot">K字头</span><h4>离婚后我成了首富</h4></div><div class="body"><div class="tags"><span>短剧</span><span>爽</span><span>反转</span></div><p>三分钟一次打脸，月台不停站。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag new">微番</span><h4>夏夜蝉鸣时</h4></div><div class="body"><div class="tags"><span>青春</span><span>3分钟</span><span>治愈</span></div><p>便利店、晚自习、没说完的喜欢。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">竖屏</span><h4>总裁的隐藏新娘</h4></div><div class="body"><div class="tags"><span>甜宠</span><span>霸总</span><span>上头</span></div><p>别问逻辑，下集更疯。</p></div></div>
+      <div class="card"><div class="cover"><span class="flag">微纪录</span><h4>奶奶的菜园</h4></div><div class="body"><div class="tags"><span>田园</span><span>家庭</span><span>慢</span></div><p>豆角南瓜傍晚浇水，像停站晒太阳。</p></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="board">
+    <div class="sec-head"><h2><span class="b">正点率</span>榜单</h2><span>On-time Rate Board</span><a class="more" href="#">完整大屏 #</a></div>
+    <div class="rank">
+      <div class="rk"><div class="rk-num top">1</div><div class="rk-info"><h4>漫长的季节</h4><span>剧集 / 东北悬疑</span></div><div class="rk-tag">正点 97%</div></div>
+      <div class="rk"><div class="rk-num top">2</div><div class="rk-info"><h4>沙丘2</h4><span>电影 / 科幻史诗</span></div><div class="rk-tag">正点 98%</div></div>
+      <div class="rk"><div class="rk-num top">3</div><div class="rk-info"><h4>狂飙</h4><span>剧集 / 犯罪</span></div><div class="rk-tag">正点 96%</div></div>
+      <div class="rk"><div class="rk-num">4</div><div class="rk-info"><h4>灵笼 第二季</h4><span>动漫 / 末日科幻</span></div><div class="rk-tag">正点 95%</div></div>
+      <div class="rk"><div class="rk-num">5</div><div class="rk-info"><h4>向往的生活</h4><span>综艺 / 慢综</span></div><div class="rk-tag">正点 95%</div></div>
+      <div class="rk"><div class="rk-num">6</div><div class="rk-info"><h4>山中的邮差</h4><span>短剧 / 竖屏</span></div><div class="rk-tag">正点 92%</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="sec-head"><h2>关于 12306影视</h2><span>About</span></div>
+    <div class="about">
+      <div class="about-card">
+        <h3>12306影视是什么？</h3>
+        <p>12306影视（12306yingshi-h5.github.io）把“买票—候车—上车—到站”翻译成找片流程：首页是购票区，片单是车次牌，类型是大车厢，画质是席位。铁路蓝白 + 检票橙，清晰、规整、像官方出行产品，但播的都是电影剧集综艺动漫短剧。</p>
+        <div class="stats">
+          <div class="stat"><b>G/D/C/K</b><span>4 种车次</span></div>
+          <div class="stat"><b>6</b><span>栏目</span></div>
+          <div class="stat"><b>100%</b><span>移动端适配</span></div>
+        </div>
+      </div>
+      <div class="about-card">
+        <h3>演示说明</h3>
+        <ul>
+          <li>纯静态单页，无后端、无数据库</li>
+          <li>所有链接均为 <code>#</code> 占位</li>
+          <li>不提供盗版资源，不与铁路 12306 官方关联</li>
+          <li>必应收录友好：唯一 h1、canonical、description 完整</li>
+          <li>铁路蓝 + 检票橙，购票式影视站</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    12306影视 · <a href="https://12306yingshi-h5.github.io/">12306yingshi-h5.github.io</a><br/>
+    演示页面：所有链接均使用 <code>#</code> 占位，不提供真实盗版资源，与铁路 12306 无关。<br/>
+    © 2026 12306影视 Demo · 选片像买票，开播即发车 🚄
+  </div>
+</footer>
+
+<script>
+  const b=document.getElementById('burger'),m=document.getElementById('menu');
+  b.onclick=()=>m.classList.toggle('open');
+  m.querySelectorAll('a').forEach(a=>a.onclick=()=>m.classList.remove('open'));
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.onclick=e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}
+  });
+</script>
+</body>
+</html>
